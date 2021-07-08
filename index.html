@@ -15,6 +15,52 @@
             document.getElementById('exibir-execucao').innerHTML += '<pre>' + campoMinado.Tabuleiro() + '</pre>';
             
             // Realize sua codificação a partir deste ponto, boa sorte!
+            function posJogada (){
+                let status;
+                let verificador = false;
+
+                switch (campoMinado.JogoStatus()) {
+                    case 0:
+                        status = 'Jogo em aberto';
+                        break;
+                    case '1':
+                        status = "Vitória"
+                        verificador = true;
+                        break;
+                    case '2':
+                        status = "Game Over"
+                        break;
+                    default:
+                        status = "Opa algum erro!"
+                }
+
+                document.getElementById('exibir-execucao').innerHTML += '<p>'+ 'Status: '+ status + '</p>';
+                document.getElementById('exibir-execucao').innerHTML += '<p>'+ 'Tabuleiro: '+ '<pre>'+ campoMinado.Tabuleiro()+'<pre>'+ '</p>';
+                return verificador;
+            }
+            function jogada(){
+                let atual = campoMinado.Tabuleiro().split('\r\n');
+                let tabuleiro=[];
+                for(let i=0;i<9;i++){
+                    let aux = atual[i].split("");
+                        tabuleiro[i] = aux;
+                }
+            }
+            
+            
+            
+            campoMinado.Abrir(4,1)
+            //jogada()
+            posJogada()
+            campoMinado.Abrir(5,1)
+            campoMinado.Abrir(5,2)
+            campoMinado.Abrir(5,6)
+            posJogada()
+            campoMinado.Abrir(6,1)
+            campoMinado.Abrir(6,2)
+            campoMinado.Abrir(6,3)
+            campoMinado.Abrir(5,3)
+            posJogada()
         </script>
     </body>
 </html>
