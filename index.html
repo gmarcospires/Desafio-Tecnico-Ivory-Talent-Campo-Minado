@@ -1,66 +1,575 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <script src="js/campo-minado.js"></script>
-    </head>
-    <body>
-        <div id="exibir-execucao"></div>
 
-        <script>
-            var campoMinado = new CampoMinado();
-            
-            
-            document.getElementById('exibir-execucao').innerHTML += '----------- Início do jogo -----------';
-            document.getElementById('exibir-execucao').innerHTML += '<pre>' + campoMinado.Tabuleiro() + '</pre>';
-            
-            // Realize sua codificação a partir deste ponto, boa sorte!
-            function posJogada (){
-                let status;
-                let verificador = false;
+<head>
+    <title></title>
+    <script src="js/campo-minado.js"></script>
+</head>
 
-                switch (campoMinado.JogoStatus()) {
-                    case 0:
-                        status = 'Jogo em aberto';
-                        break;
-                    case '1':
-                        status = "Vitória"
-                        verificador = true;
-                        break;
-                    case '2':
-                        status = "Game Over"
-                        break;
-                    default:
-                        status = "Opa algum erro!"
-                }
+<body>
+    <div id="exibir-execucao"></div>
 
-                document.getElementById('exibir-execucao').innerHTML += '<p>'+ 'Status: '+ status + '</p>';
-                document.getElementById('exibir-execucao').innerHTML += '<p>'+ 'Tabuleiro: '+ '<pre>'+ campoMinado.Tabuleiro()+'<pre>'+ '</p>';
-                return verificador;
+    <script>
+        var campoMinado = new CampoMinado();
+
+
+        document.getElementById('exibir-execucao').innerHTML += '----------- Início do jogo -----------';
+        document.getElementById('exibir-execucao').innerHTML += '<pre>' + campoMinado.Tabuleiro() + '</pre>';
+
+        // Realize sua codificação a partir deste ponto, boa sorte!
+
+
+        function posJogada() {
+            let status;
+            let verificador = false;
+
+            switch (campoMinado.JogoStatus()) {
+                case 0:
+                    status = 'Jogo em aberto';
+                    break;
+                case 1:
+                    status = "Vitória"
+                    verificador = true;
+                    break;
+                case 2:
+                    status = "Game Over"
+                    break;
+                default:
+                    status = "Opa algum erro!"
             }
-            function jogada(){
-                let atual = campoMinado.Tabuleiro().split('\r\n');
-                let tabuleiro=[];
-                for(let i=0;i<9;i++){
-                    let aux = atual[i].split("");
-                        tabuleiro[i] = aux;
+
+            document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Status: ' + status + '</p>';
+            document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Tabuleiro: ' + '<pre>' + campoMinado
+                .Tabuleiro() + '<pre>' + '</p>';
+            return verificador;
+        }
+
+        var temBomba = false;
+
+        function jogada() {
+            function verificaProbabilidade() {
+                for (let i = 0; i < 9; i++) {
+                    for (let j = 0; j < 9; j++) {
+                        if ((tabuleiro[i][j].numero != 0 && tabuleiro[i][j].numero != "")) {
+                            // console.log("i: " + (i+1) +" j: "+ (j+1) + " ")
+                            //Verificar vizinhos
+                            // Os vizinhos são 
+                            // (i-1),(j-1)
+                            // (i-1),(j)
+                            // (i-1),(j+1)
+                            // (i),(j-1)
+                            // (i),(j+1)
+                            // (i+1),(j-1)
+                            // (i+1),(j)
+                            // (i+1),(j+1)
+                            if (i == 0) {
+                                //Não verifica i-1
+
+                                if (j == 0) {
+                                    //Não verifica j-1 
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j + 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j + 1].probabilidade);
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade);
+                                    // (i+1),(j+1)
+                                    if (tabuleiro[i + 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j + 1]);
+                                    }
+                                    tabuleiro[i + 1][j + 1].probabilidade = (tabuleiro[i + 1][j + 1].numero == "") ? (
+                                        tabuleiro[i + 1][j + 1].probabilidade + 1) : (tabuleiro[i + 1][j + 1]
+                                        .probabilidade);
+                                } else if (j == 8) {
+                                    //Não verifica j+1
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade);
+                                    // (i+1),(j-1)
+                                    if (tabuleiro[i + 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j - 1]);
+                                    }
+                                    tabuleiro[i + 1][j - 1].probabilidade = (tabuleiro[i + 1][j - 1].numero == "") ? (
+                                        tabuleiro[i + 1][j - 1].probabilidade + 1) : (tabuleiro[i + 1][j - 1]
+                                        .probabilidade);
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade);
+                                } else {
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade)
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j + 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j + 1].probabilidade)
+                                    // (i+1),(j-1)
+                                    if (tabuleiro[i + 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j - 1]);
+                                    }
+                                    tabuleiro[i + 1][j - 1].probabilidade = (tabuleiro[i + 1][j - 1].numero == "") ? (
+                                        tabuleiro[i + 1][j - 1].probabilidade + 1) : (tabuleiro[i + 1][j - 1]
+                                        .probabilidade)
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade)
+                                    // (i+1),(j+1)
+                                    if (tabuleiro[i + 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j + 1]);
+                                    }
+                                    tabuleiro[i + 1][j + 1].probabilidade = (tabuleiro[i + 1][j + 1].numero == "") ? (
+                                        tabuleiro[i + 1][j + 1].probabilidade + 1) : (tabuleiro[i + 1][j + 1]
+                                        .probabilidade)
+                                }
+                            } else if (i == 8) {
+                                //Não verifica i+1
+
+                                if (j == 0) {
+                                    //Não verifica j-1
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i-1),(j+1)
+                                    if (tabuleiro[i - 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j + 1]);
+                                    }
+                                    tabuleiro[i - 1][j + 1].probabilidade = (tabuleiro[i - 1][j + 1].numero == "") ? (
+                                        tabuleiro[i - 1][j + 1].probabilidade + 1) : (tabuleiro[i - 1][j + 1]
+                                        .probabilidade)
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j + 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j + 1].probabilidade)
+                                } else if (j == 8) {
+                                    //Não verifica j+1
+                                    // (i-1),(j-1)
+                                    if (tabuleiro[i - 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j - 1]);
+                                    }
+                                    tabuleiro[i - 1][j - 1].probabilidade = (tabuleiro[i - 1][j - 1].numero == "") ? (
+                                        tabuleiro[i - 1][j - 1].probabilidade + 1) : (tabuleiro[i - 1][j - 1]
+                                        .probabilidade)
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade)
+                                } else {
+                                    // (i-1),(j-1)
+                                    if (tabuleiro[i - 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j - 1]);
+                                    }
+                                    tabuleiro[i - 1][j - 1].probabilidade = (tabuleiro[i - 1][j - 1].numero == "") ? (
+                                        tabuleiro[i - 1][j - 1].probabilidade + 1) : (tabuleiro[i - 1][j - 1]
+                                        .probabilidade)
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i-1),(j+1)
+                                    if (tabuleiro[i - 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j + 1]);
+                                    }
+                                    tabuleiro[i - 1][j + 1].probabilidade = (tabuleiro[i - 1][j + 1].numero == "") ? (
+                                        tabuleiro[i - 1][j + 1].probabilidade + 1) : (tabuleiro[i - 1][j + 1]
+                                        .probabilidade)
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade)
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j + 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j + 1].probabilidade)
+                                }
+                            } else {
+                                if (j == 0) {
+                                    //Não verifica j-1
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i-1),(j+1)
+                                    if (tabuleiro[i - 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j + 1]);
+                                    }
+                                    tabuleiro[i - 1][j + 1].probabilidade = (tabuleiro[i - 1][j + 1].numero == "") ? (
+                                        tabuleiro[i - 1][j + 1].probabilidade + 1) : (tabuleiro[i - 1][j + 1]
+                                        .probabilidade)
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j + 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j + 1].probabilidade)
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade)
+                                    // (i+1),(j+1)
+                                    if (tabuleiro[i + 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j + 1]);
+                                    }
+                                    tabuleiro[i + 1][j + 1].probabilidade = (tabuleiro[i + 1][j + 1].numero == "") ? (
+                                        tabuleiro[i + 1][j + 1].probabilidade + 1) : (tabuleiro[i + 1][j + 1]
+                                        .probabilidade)
+                                } else if (j == 8) {
+                                    //Não verifica j+1
+                                    // (i-1),(j-1)
+                                    if (tabuleiro[i - 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j - 1]);
+                                    }
+                                    tabuleiro[i - 1][j - 1].probabilidade = (tabuleiro[i - 1][j - 1].numero == "") ? (
+                                        tabuleiro[i - 1][j - 1].probabilidade + 1) : (tabuleiro[i - 1][j - 1]
+                                        .probabilidade)
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade)
+                                    // (i+1),(j-1)
+                                    if (tabuleiro[i + 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j - 1]);
+                                    }
+                                    tabuleiro[i + 1][j - 1].probabilidade = (tabuleiro[i + 1][j - 1].numero == "") ? (
+                                        tabuleiro[i + 1][j - 1].probabilidade + 1) : (tabuleiro[i + 1][j - 1]
+                                        .probabilidade)
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade)
+                                } else {
+                                    // (i-1),(j-1)
+                                    if (tabuleiro[i - 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j - 1]);
+                                    }
+                                    tabuleiro[i - 1][j - 1].probabilidade = (tabuleiro[i - 1][j - 1].numero == "") ? (
+                                        tabuleiro[i - 1][j - 1].probabilidade + 1) : (tabuleiro[i - 1][j - 1]
+                                        .probabilidade)
+                                    // (i-1),(j)
+                                    if (tabuleiro[i - 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j]);
+                                    }
+                                    tabuleiro[i - 1][j].probabilidade = (tabuleiro[i - 1][j].numero == "") ? (tabuleiro[
+                                        i -
+                                        1][j].probabilidade + 1) : (tabuleiro[i - 1][j].probabilidade)
+                                    // (i-1),(j+1)
+                                    if (tabuleiro[i - 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i - 1][j + 1]);
+                                    }
+                                    tabuleiro[i - 1][j + 1].probabilidade = (tabuleiro[i - 1][j + 1].numero == "") ? (
+                                        tabuleiro[i - 1][j + 1].probabilidade + 1) : (tabuleiro[i - 1][j + 1]
+                                        .probabilidade)
+                                    // (i),(j-1)
+                                    if (tabuleiro[i][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j - 1]);
+                                    }
+                                    tabuleiro[i][j - 1].probabilidade = (tabuleiro[i][j - 1].numero == "") ? (tabuleiro[
+                                        i][
+                                        j - 1
+                                    ].probabilidade + 1) : (tabuleiro[i][j - 1].probabilidade)
+                                    // (i),(j+1)
+                                    if (tabuleiro[i][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i][j + 1]);
+                                    }
+                                    tabuleiro[i][j + 1].probabilidade = (tabuleiro[i][j + 1].numero == "") ? (
+                                        tabuleiro[
+                                            i][j + 1].probabilidade + 1) : (tabuleiro[1][j + 1]
+                                        .probabilidade)
+                                    // (i+1),(j-1)
+                                    if (tabuleiro[i + 1][j - 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j - 1]);
+                                    }
+                                    tabuleiro[i + 1][j - 1].probabilidade = (tabuleiro[i + 1][j - 1].numero == "") ? (
+                                        tabuleiro[i + 1][j - 1].probabilidade + 1) : (tabuleiro[i + 1][j - 1]
+                                        .probabilidade)
+                                    // (i+1),(j)
+                                    if (tabuleiro[i + 1][j].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j]);
+                                    }
+                                    tabuleiro[i + 1][j].probabilidade = (tabuleiro[i + 1][j].numero == "") ? (tabuleiro[
+                                        i +
+                                        1][j].probabilidade + 1) : (tabuleiro[i + 1][j].probabilidade)
+                                    // (i+1),(j+1)
+                                    if (tabuleiro[i + 1][j + 1].numero == "") {
+                                        marcado.push(tabuleiro[i + 1][j + 1]);
+                                    }
+                                    tabuleiro[i + 1][j + 1].probabilidade = (tabuleiro[i + 1][j + 1].numero == "") ? (
+                                        tabuleiro[i + 1][j + 1].probabilidade + 1) : (tabuleiro[i + 1][j + 1]
+                                        .probabilidade)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function diminuiContagem() {
+                for (let index = 0; index < bombas.length; index++) {
+                                //Acha a posição da bomba
+                                let i = parseInt((bombas[index].indices.split(""))[0]);
+                                let j = parseInt((bombas[index].indices.split(""))[1]);
+                                console.log("oi")
+                                //Verificar vizinhos da bomba
+                                if (i == 0) {
+                                    //Não verifica i-1
+                                    if (j == 0) {
+                                        //Não verifica j-1 
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero);
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                    // (i+1),(j+1)
+                                        tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
+                                    } else if (j == 8) {
+                                        //Não verifica j+1
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                        // (i+1),(j-1)
+                                        tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[+1][j-1].numero);
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                    } else {
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero)
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                        // (i+1),(j-1)
+                                        tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[+1][j-1].numero)
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero)
+                                    // (i+1),(j+1)
+                                        tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero)
+                                    }
+                                } else if (i == 8) {
+                                    //Não verifica i+1
+                                    if (j == 0) {
+                                        //Não verifica j-1
+                                        // (i-1),(j)
+                                        tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i-1),(j+1)
+                                        tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                    } else if (j == 8) {
+                                        //Não verifica j+1
+                                        // (i-1),(j-1)
+                                        tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                        // (i-1),(j)
+                                        tabuleiro[i - 1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero)
+                                    } else {
+                                        // (i-1),(j-1)
+                                        tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                        // (i-1),(j)
+                                        tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i-1),(j+1)
+                                        tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero)
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                    }
+                                } else {
+                                    console.log("oi3")
+                                    if (j == 0) {
+                                        //Não verifica j-1
+                                        // (i-1),(j)
+                                        tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i-1),(j+1)
+                                        tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero)
+                                    // (i+1),(j+1)
+                                        tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero)
+                                    } else if (j == 8) {
+                                        //Não verifica j+1
+                                        // (i-1),(j-1)
+                                        tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                        // (i-1),(j)
+                                        tabuleiro[i - 1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero)
+                                        // (i+1),(j-1)
+                                        tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[+1][j-1].numero)
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero)
+                                    } else {
+                                        console.log("o33")
+                                        // (i-1),(j-1)
+                                        tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                        // (i-1),(j)
+                                        tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                        // (i-1),(j+1)
+                                        tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                        // (i),(j-1)
+                                        tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero)
+                                        // (i),(j+1)
+                                        tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                        // (i+1),(j-1)
+                                        tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[+1][j-1].numero)
+                                        // (i+1),(j)
+                                        tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero)
+                                        // (i+1),(j+1)
+                                        tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero)
+                                    }
+                                }
+
+                            }
+            }
+            //Preparando variáveis
+            let clicaOuBomba = false;
+            let bombas = [];
+            let marcado = [];
+            let marcadoAnterior = []
+            //Pegando tabuleiro atual
+            let atual = campoMinado.Tabuleiro().split('\r\n');
+            //Preparando variável matriz 9x9
+            let tabuleiro = [];
+            tabuleiro = new Array(9);
+            for (let i = 0; i < 9; i++) {
+                tabuleiro[i] = new Array(9);
+            }
+
+            //Colocando Valores do tabuleiro atual para matriz tabuleiro
+            for (let i = 0; i < 9; i++) {
+                for (let j = 0; j < 9; j++) {
+                    let aux = (atual[i][j].split("") != '-') ? parseInt(atual[i][j].split("")) : atual[i][j].split("");
+                    tabuleiro[i][j] = {
+                        numero: (aux != '-') ? (aux) : "",
+                        bomba: false,
+                        probabilidade: 0,
+                        indices: (i + '' + j),
+                        aberto: (aux != '-') ? true : false
+
+                    }
                 }
             }
             
-            
-            
-            campoMinado.Abrir(4,1)
-            //jogada()
-            posJogada()
-            campoMinado.Abrir(5,1)
-            campoMinado.Abrir(5,2)
-            campoMinado.Abrir(5,6)
-            posJogada()
-            campoMinado.Abrir(6,1)
-            campoMinado.Abrir(6,2)
-            campoMinado.Abrir(6,3)
-            campoMinado.Abrir(5,3)
-            posJogada()
-        </script>
-    </body>
+            // do {PRECISA DISSO AQUI???
+            //     if (temBomba) {
+            //         //Diminui contagem de bombas
+            //            diminuiContagem()
+            //     }
+            //     //Verifica probabilidade de ter bomba
+            //     verificaProbabilidade()
+                    //TODO
+            //  DELETAR TABULEIRO/PASSAR MARCADO PARA MARCADOANTERIOR/ DELETAR MARCADOANTERIOR
+            // } while (!clicaOuBomba)
+
+        }
+
+
+        jogada()
+        // Sequencia Correta
+        // Bomba(4,3)
+        // Bomba(5,7)
+        // campoMinado.Abrir(5,6)
+        // posJogada()
+        // Bomba(1,9)
+        // Bomba(4,2)
+        // campoMinado.Abrir(4,1)
+        // posJogada()
+        // Bomba(5,5)
+        // campoMinado.Abrir(5,1)
+        // campoMinado.Abrir(5,2)
+        // posJogada()
+        // campoMinado.Abrir(5,3)
+        // posJogada()
+        // campoMinado.Abrir(6,2)
+        // campoMinado.Abrir(6,3)
+        // posJogada() 
+        // bomba(6,5)
+        // bomba(6,8)
+        // campoMinado.Abrir(6,7)
+        // campoMinado.Abrir(6,9)
+        // posJogada()
+        //Fim
+    </script>
+</body>
+
 </html>
