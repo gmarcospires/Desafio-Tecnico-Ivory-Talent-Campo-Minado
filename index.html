@@ -18,11 +18,20 @@
 
         // Realize sua codificação a partir deste ponto, boa sorte!
 
-
+        var temBomba = false;
+         //Preparando variáveis
+            let bombas = [];
+            let marcadoAnterior = [];
+            //Preparando variável matriz 9x9
+            let tabuleiro = [];
+            tabuleiro = new Array(9);
+            for (let i = 0; i < 9; i++) {
+                tabuleiro[i] = new Array(9);
+            }
+            
         function posJogada() {
             let status;
             let verificador = false;
-
             switch (campoMinado.JogoStatus()) {
                 case 0:
                     status = 'Jogo em aberto';
@@ -33,967 +42,1105 @@
                     break;
                 case 2:
                     status = "Game Over"
+                    verificador = true;
                     break;
                 default:
                     status = "Opa algum erro!"
             }
-
             document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Status: ' + status + '</p>';
-            document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Tabuleiro: ' + '<pre>' + campoMinado
-                .Tabuleiro() + '<pre>' + '</p>';
+            document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Tabuleiro: ' + '<pre>' + campoMinado.Tabuleiro() + '<pre>' + '</p>';
             return verificador;
         }
-
-        var temBomba = false;
 
         function jogada() {
             function abrirCasaTabuleiro(){
                 for(var i = 0; i < abrirCasa.length; i++){
-                            let indiceI = (abrirCasa[i].indices.split(""))[0];
-                            let indiceJ = (abrirCasa[i].indices.split(""))[1];
+                            let indiceI = parseInt((abrirCasa[i].indices.split(""))[0]);
+                            let indiceJ = parseInt((abrirCasa[i].indices.split(""))[1]);
                             document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Abrindo casa: (' + (indiceI +1) + ',' + (indiceJ+1) + ')' + '</p>';
-                            campoMinado.Abrir(indiceI,indiceJ)
+                            campoMinado.Abrir((indiceI+1),(indiceJ+1))
                         }
             }
             function verificaProbabilidade() {
-                //Verificado
+                
+                if(auxxx === 7){
+                    console.log()
+                }
                 //Se uma casa está aberta e indica bombas em sua vizinhança, há possibilidade dos vizinhos, não abertos e não bombas, serem uma bomba e esses serão marcados.
                 for (let i = 0; i < 9; i++) {
                     for (let j = 0; j < 9; j++) {
-                        if ((tabuleiro[i][j].numero != 0 && tabuleiro[i][j].numero != "")) {
+                        if(tabuleiro[i][j].aberto  === true ){
+                            if ((tabuleiro[i][j].numero != 0)) {
                             //Verificar vizinhos
                             // Os vizinhos são (i-1),(j-1) // (i-1),(j) // (i-1),(j+1) // (i),(j-1)  // (i),(j+1) // (i+1),(j-1)  // (i+1),(j) // (i+1),(j+1)
-
-                            if (i == 0) {
+                            if (i  === 0) {
                                 //Não verifica i-1
-
-                                if (j == 0) {
+                                if (j  === 0) {
                                     //Não verifica j-1 
                                     // (i),(j+1)
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
                                     // (i+1),(j)
-                                    if (tabuleiro[i+1][j].numero == "" &&tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade+1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade+1) : (tabuleiro[i+1][j].probabilidade);
                                     // (i+1),(j+1)
-                                    if (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j+1]);
+                                    if (tabuleiro[i+1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j+1])){
+                                            marcado.push(tabuleiro[i+1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
-                                } else if (j == 8) {
+                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero  === "-" ) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
+                                } else if (j  === 8) {
                                     //Não verifica j+1
                                     // (i),(j-1)
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                     // (i+1),(j-1)
-                                    if (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j-1]);
+                                    if (tabuleiro[i+1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j-1])){
+                                            marcado.push(tabuleiro[i+1][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
+                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero  === "-" ) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
                                     // (i+1),(j)
-                                    if (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
                                 } else {
                                     // (i),(j-1)
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                     // (i),(j+1)
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
+                                        
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
                                     // (i+1),(j-1)
-                                    if (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j-1]);
+                                    if (tabuleiro[i+1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j-1])){
+                                            marcado.push(tabuleiro[i+1][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
+                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero  === "-" ) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
                                     // (i+1),(j)
-                                    if (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
                                     // (i+1),(j+1)
-                                    if (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j+1]);
+                                    if (tabuleiro[i+1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j+1])){
+                                            marcado.push(tabuleiro[i+1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
+                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero  === "-" ) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
                                 }
-                            } else if (i == 8) {
+                            } else if (i  === 8) {
                                 //Não verifica i+1
 
-                                if (j == 0) {
+                                if (j  === 0) {
                                     //Não verifica j-1
                                     // (i-1),(j)
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i-1),(j+1)
-                                    if (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j+1]);
+                                    if (tabuleiro[i-1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j+1])){
+                                            marcado.push(tabuleiro[i-1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
+                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero  === "-" ) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
                                     // (i),(j+1) 
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
-                                } else if (j == 8) {
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                } else if (j  === 8) {
                                     //Não verifica j+1
                                     // (i-1),(j-1)
-                                    if (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j-1]);
+                                    if (tabuleiro[i-1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
+                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero  === "-" ) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
                                     // (i-1),(j)
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i),(j-1) 
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                 } else {
                                     // (i-1),(j-1) 
-                                    if (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j-1]);
+                                    if (tabuleiro[i-1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
+                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero  === "-" ) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
                                     // (i-1),(j) 
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i-1),(j+1) 
-                                    if (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j+1]);
+                                    if (tabuleiro[i-1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j+1])){
+                                            marcado.push(tabuleiro[i-1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
+                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero  === "-" ) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
                                     // (i),(j-1) 
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                     // (i),(j+1) 
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
                                 }
                             } else {
-                                if (j == 0) {
+                                if (j  === 0) {
                                     //Não verifica j-1
                                     // (i-1),(j) 
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i-1),(j+1) 
-                                    if (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j+1]);
+                                    if (tabuleiro[i-1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j+1])){
+                                            marcado.push(tabuleiro[i-1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
+                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero  === "-" ) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
                                     // (i),(j+1) 
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
                                     // (i+1),(j) 
-                                    if (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i + 1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
+                                        
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
                                     // (i+1),(j+1) 
-                                    if (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j+1]);
+                                    if (tabuleiro[i+1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j+1])){
+                                            marcado.push(tabuleiro[i+1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
-                                } else if (j == 8) {
+                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero  === "-" ) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
+                                } else if (j  === 8) {
                                     //Não verifica j+1
                                     // (i-1),(j-1) 
-                                    if (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j-1]);
+                                    if (tabuleiro[i-1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
+                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero  === "-" ) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
                                     // (i-1),(j) 
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i),(j-1) 
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                     // (i+1),(j-1) 
-                                    if (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j-1]);
+                                    if (tabuleiro[i+1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j-1])){
+                                            marcado.push(tabuleiro[i+1][j-1]);
+                                        }
+                                        
                                     }
-                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
+                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero  === "-" ) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
                                     // (i+1),(j) 
-                                    if (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
                                 } else {
                                     // (i-1),(j-1) 
-                                    if (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j-1]);
+                                    if (tabuleiro[i-1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero == "" && tabuleiro[i-1][j-1].bomba == false) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
+                                    tabuleiro[i-1][j-1].probabilidade = (tabuleiro[i-1][j-1].numero  === "-" ) ? (tabuleiro[i-1][j-1].probabilidade+1) : (tabuleiro[i-1][j-1].probabilidade)
                                     // (i-1),(j) 
-                                    if (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j]);
+                                    if (tabuleiro[i-1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j])){
+                                            marcado.push(tabuleiro[i-1][j]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero == "" && tabuleiro[i-1][j].bomba == false) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
+                                    tabuleiro[i-1][j].probabilidade = (tabuleiro[i-1][j].numero  === "-" ) ? (tabuleiro[i-1][j].probabilidade+1) : (tabuleiro[i-1][j].probabilidade)
                                     // (i-1),(j+1) 
-                                    if (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i-1][j+1]);
+                                    if (tabuleiro[i-1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i-1][j+1])){
+                                            marcado.push(tabuleiro[i-1][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero == "" && tabuleiro[i-1][j+1].bomba == false) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
+                                    tabuleiro[i-1][j+1].probabilidade = (tabuleiro[i-1][j+1].numero  === "-" ) ? (tabuleiro[i-1][j+1].probabilidade+1) : (tabuleiro[i-1][j+1].probabilidade)
                                     // (i),(j-1) 
-                                    if (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j-1]);
+                                    if (tabuleiro[i][j-1].numero  === "-" ) {
+                                         if(!marcado.includes(tabuleiro[i][j-1])){
+                                            marcado.push(tabuleiro[i][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero == "" && tabuleiro[i][j-1].bomba == false) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
+                                    tabuleiro[i][j-1].probabilidade = (tabuleiro[i][j-1].numero  === "-" ) ? (tabuleiro[i][j-1].probabilidade+1) : (tabuleiro[i][j-1].probabilidade);
                                     // (i),(j+1) 
-                                    if (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i][j+1]);
+                                    if (tabuleiro[i][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i][j+1])){
+                                            marcado.push(tabuleiro[i][j+1]);
+                                        }
                                     }
-                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero == "" && tabuleiro[i][j+1].bomba == false) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
+                                    tabuleiro[i][j+1].probabilidade = (tabuleiro[i][j+1].numero  === "-" ) ? (tabuleiro[i][j+1].probabilidade+1) : (tabuleiro[i][j+1].probabilidade);
                                     // (i+1),(j-1) 
-                                    if (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j-1]);
+                                    if (tabuleiro[i+1][j-1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j-1])){
+                                            marcado.push(tabuleiro[i+1][j-1]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero == "" && tabuleiro[i+1][j-1].bomba == false) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
+                                    tabuleiro[i+1][j-1].probabilidade = (tabuleiro[i+1][j-1].numero  === "-" ) ? (tabuleiro[i+1][j-1].probabilidade+1) : (tabuleiro[i+1][j-1].probabilidade);
                                     // (i+1),(j) 
-                                    if (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j]);
+                                    if (tabuleiro[i+1][j].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j])){
+                                            marcado.push(tabuleiro[i+1][j]);
+                                        }
                                     }
-                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero == "" && tabuleiro[i+1][j].bomba == false) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
+                                    tabuleiro[i+1][j].probabilidade = (tabuleiro[i+1][j].numero  === "-" ) ? (tabuleiro[i+1][j].probabilidade + 1) : (tabuleiro[i+1][j].probabilidade);
                                     // (i+1),(j+1)
-                                    if (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) {
-                                        marcado.push(tabuleiro[i+1][j+1]);
+                                    if (tabuleiro[i+1][j+1].numero  === "-" ) {
+                                        if(!marcado.includes(tabuleiro[i+1][j+1])){
+                                            marcado.push(tabuleiro[i+1][j+1]);
+                                        }
+                                        
                                     }
-                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero == "" && tabuleiro[i+1][j+1].bomba == false) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
+                                    tabuleiro[i+1][j+1].probabilidade = (tabuleiro[i+1][j+1].numero  === "-" ) ? (tabuleiro[i+1][j+1].probabilidade+1) : (tabuleiro[i+1][j+1].probabilidade);
                                 }
                             }
                         }
+                        }
+                        
                     }
                 }
-            }
+}
             function diminuiContagem() {
-                //Verificado
+                
                 //Se há bombas, seus vizinhos abertos e não zeros não correspondem ao estado "atual" da tabela. Então diminui o total de bombas ao redor desses abertos, para corresponder a quantidade de bombas ao redor atuais.
                 for (let index = 0; index < bombas.length; index++) {
                                 //Acha a posição da bomba
                                 let i = parseInt((bombas[index].indices.split(""))[0]);
                                 let j = parseInt((bombas[index].indices.split(""))[1]);
                                 //Verificar vizinhos da bomba
-                                if (i == 0) {
+                                if (i === 0) {
                             //Não verifica i-1
-                            if (j == 0) {
+                            if (j === 0) {
                                 //Não verifica j-1 
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero);
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero);
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                                 // (i+1),(j+1)
-                                if(tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0){
+                                if(tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j+1])
                                 }
-                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0) ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
-                            } else if (j == 8) {
+                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
+                            } else if (j === 8) {
                                 //Não verifica j+1
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                                 // (i+1),(j-1)
-                                if(tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0){
+                                if(tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j-1])
                                 }
-                                if(tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0){
-                                    modificado.push(tabuleiro[i+1][j-1])
-                                }
-                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0) ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
+                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);;
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                             } else {
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
                                 // (i+1),(j-1)
-                                if(tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0){
+                                if(tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j-1])
                                 }
-                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0) ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
+                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                             // (i+1),(j+1)
-                                if(tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0){
+                                if(tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j+1])
                                 }
-                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0) ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
+                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
                             }
-                        } else if (i == 8) {
+                        } else if (i === 8) {
                             //Não verifica i+1
-                            if (j == 0) {
+                            if (j === 0) {
                                 //Não verifica j-1
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i-1),(j+1)
-                                if(tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0){
+                                if(tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j+1])
                                 }
-                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0) ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
-                            } else if (j == 8) {
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                            } else if (j === 8) {
                                 //Não verifica j+1
                                 // (i-1),(j-1)
-                                if(tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0){
+                                if(tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j-1])
                                 }
-                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0) ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                             } else {
                                 // (i-1),(j-1)
-                                if(tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0){
+                                if(tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j-1])
                                 }
-                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0) ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i-1),(j+1)
-                                if(tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0){
+                                if(tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j+1])
                                 }
-                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0) ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
                             }
                         } else {
                         
-                            if (j == 0) {
+                            if (j === 0) {
                                 //Não verifica j-1
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i-1),(j+1)
-                                if(tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0){
+                                if(tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j+1])
                                 }
-                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0) ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                             // (i+1),(j+1)
-                                if(tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0){
+                                if(tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j+1])
                                 }
-                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0) ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
-                            } else if (j == 8) {
+                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
+                            } else if (j === 8) {
                                 //Não verifica j+1
                                 // (i-1),(j-1)
-                                if(tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0){
+                                if(tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j-1])
                                 }
-                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0) ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                                 // (i+1),(j-1)
-                                if(tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0){
+                                if(tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j-1])
                                 }
-                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0) ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
+                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                             } else {
                                 
                                 // (i-1),(j-1)
-                                if(tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0){
+                                if(tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j-1])
                                 }
-                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "" &&  tabuleiro[i-1][j-1].numero != 0) ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
+                                tabuleiro[i-1][j-1].numero = (tabuleiro[i-1][j-1].numero != "-" &&  tabuleiro[i-1][j-1].numero != 0 &&  tabuleiro[i-1][j-1].numero != "*") ? (tabuleiro[i-1][j-1].numero-1) : (tabuleiro[i-1][j-1].numero)
                                 // (i-1),(j)
-                                if(tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0){
+                                if(tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j])
                                 }
-                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "" &&  tabuleiro[i-1][j].numero != 0) ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
+                                tabuleiro[i-1][j].numero = (tabuleiro[i-1][j].numero != "-" &&  tabuleiro[i-1][j].numero != 0 &&  tabuleiro[i-1][j].numero != "*") ? (tabuleiro[i-1][j].numero-1) : (tabuleiro[i-1][j].numero)
                                 // (i-1),(j+1)
-                                if(tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0){
+                                if(tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i-1][j+1])
                                 }
-                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "" &&  tabuleiro[i-1][j+1].numero != 0) ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
+                                tabuleiro[i-1][j+1].numero = (tabuleiro[i-1][j+1].numero != "-" &&  tabuleiro[i-1][j+1].numero != 0 && tabuleiro[i-1][j+1].numero != "*") ? (tabuleiro[i-1][j+1].numero-1) : (tabuleiro[i-1][j+1].numero)
                                 // (i),(j-1)
-                                if(tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0){
+                                if(tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i][j-1])
                                 }
-                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "" &&  tabuleiro[i][j-1].numero != 0) ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
+                                tabuleiro[i][j-1].numero = (tabuleiro[i][j-1].numero != "-" &&  tabuleiro[i][j-1].numero != 0 && tabuleiro[i][j-1].numero != "*") ? (tabuleiro[i][j-1].numero-1) : (tabuleiro[i][j-1].numero);
                                 // (i),(j+1)
-                                if(tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0){
+                                if(tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i][j+1])
                                 }
-                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "" &&  tabuleiro[i][j+1].numero != 0) ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
+                                tabuleiro[i][j+1].numero = (tabuleiro[i][j+1].numero != "-" &&  tabuleiro[i][j+1].numero != 0 && tabuleiro[i][j+1].numero != "*") ? (tabuleiro[i][j+1].numero-1) : (tabuleiro[i][j+1].numero)
                                 // (i+1),(j-1)
-                                if(tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0){
+                                if(tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j-1])
                                 }
-                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "" &&  tabuleiro[i+1][j-1].numero != 0) ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
+                                tabuleiro[i+1][j-1].numero = (tabuleiro[i+1][j-1].numero != "-" &&  tabuleiro[i+1][j-1].numero != 0 && tabuleiro[i+1][j-1].numero != "*") ? (tabuleiro[i+1][j-1].numero-1) : (tabuleiro[i+1][j-1].numero);
                                 // (i+1),(j)
-                                if(tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0){
+                                if(tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j])
                                 }
-                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "" &&  tabuleiro[i+1][j].numero != 0) ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
+                                tabuleiro[i+1][j].numero = (tabuleiro[i+1][j].numero != "-" &&  tabuleiro[i+1][j].numero != 0 &&  tabuleiro[i+1][j].numero != "*") ? (tabuleiro[i+1][j].numero-1) : (tabuleiro[i+1][j].numero);
                                 // (i+1),(j+1)
-                                if(tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0){
+                                if(tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*"){
                                     modificado.push(tabuleiro[i+1][j+1])
                                 }
-                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "" &&  tabuleiro[i+1][j+1].numero != 0) ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
+                                tabuleiro[i+1][j+1].numero = (tabuleiro[i+1][j+1].numero != "-" &&  tabuleiro[i+1][j+1].numero != 0 &&  tabuleiro[i+1][j+1].numero != "*") ? (tabuleiro[i+1][j+1].numero-1) : (tabuleiro[i+1][j+1].numero);
                             }
                         }
 
                             }
             }
             function verificaMarcadoAnterior() {
-                let aux = false; 
-                for(let i=0; i<marcadoAnterior.length;i++){
-                    let indiceI = (marcadoAnterior[i].indices.split(""))[0];
-                    let indiceJ = (marcadoAnterior[i].indices.split(""))[1];
-                    if(tabuleiro[indiceI][indiceJ].bomba == false && tabuleiro[indiceI][indiceJ].aberto == false){
-                        for(let j=0;j<marcado.length;j++){
-                            if(marcado[j] == marcadoAnterior[i]){
-                                aux = true;
-                            }
-                        }
-                    }
-                    if(aux == false){
-                        abrirCasa.push(marcadoAnterior[i]);
-                    }
+    let aux = false; 
+    for(let i=0; i<marcadoAnterior.length;i++){
+        let indiceI = (marcadoAnterior[i].indices.split(""))[0];
+        let indiceJ = (marcadoAnterior[i].indices.split(""))[1];
+        if(tabuleiro[indiceI][indiceJ].numero != "*" && tabuleiro[indiceI][indiceJ].numero != "-"){
+            for(let j=0;j<marcado.length;j++){
+                if(marcado[j] === marcadoAnterior[i]){
+                    aux = true;
                 }
-                return (abrirCasa.length > 0) ? (true) : (false);
             }
+        }
+        if(aux === false){
+            abrirCasa.push(marcadoAnterior[i]);
+        }
+    }
+    return (abrirCasa.length > 0) ? (true) : (false);
+}            
             function verificaVizinhoMarcado(){
-                //Verificado
-                    let verificador = false;
+                
+                    
                     for (let index = 0; index < marcado.length; index++) {
-                                    //Acha a posição da bomba
+                        let verificador = false;
+                                    //Acha a posição do marcado
                                     let i = parseInt((marcado[index].indices.split(""))[0]);
                                     let j = parseInt((marcado[index].indices.split(""))[1]);
                                     //Verificar vizinhos da bomba
-                                    if (i == 0) {
+                                    if (i === 0) {
                                         //Não verifica i-1
-                                        if (j == 0) {
+                                        if (j === 0) {
                                             //Não verifica j-1 
                                             // (i),(j+1)
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j)
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j+1)
-                                            if(tabuleiro[i+1][j+1].numero == 0){
+                                            if(tabuleiro[i+1][j+1].numero === 0){
                                                     verificador = true;  
                                                 }
-                                        } else if (j == 8) {
+                                        } else if (j === 8) {
                                             //Não verifica j+1
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j-1) 
-                                            if(tabuleiro[i+1][j-1].numero == 0){
+                                            if(tabuleiro[i+1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j) 
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                         } else {
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j+1)
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j-1)
-                                            if(tabuleiro[i+1][j-1].numero == 0){
+                                            if(tabuleiro[i+1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j) 
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                         // (i+1),(j+1)
-                                            if(tabuleiro[i+1][j+1].numero == 0){
+                                            if(tabuleiro[i+1][j+1].numero === 0){
                                                     verificador = true;  
                                                 }
                                         }
-                                    } else if (i == 8) {
+                                    } else if (i === 8) {
                                         //Não verifica i+1
-                                        if (j == 0) {
+                                        if (j === 0) {
                                             //Não verifica j-1
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j+1)
-                                            if(tabuleiro[i-1][j+1].numero == 0){
+                                            if(tabuleiro[i-1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j+1) 
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
-                                        } else if (j == 8) {
+                                        } else if (j === 8) {
                                             //Não verifica j+1
                                             // (i-1),(j-1)
-                                            if(tabuleiro[i-1][j-1].numero == 0){
+                                            if(tabuleiro[i-1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                         } else {
                                             // (i-1),(j-1)
-                                            if(tabuleiro[i-1][j-1].numero == 0){
+                                            if(tabuleiro[i-1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j+1)
-                                            if(tabuleiro[i-1][j+1].numero == 0){
+                                            if(tabuleiro[i-1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j+1)
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
                                         }
                                     } else {
                                     
-                                        if (j == 0) {
+                                        if (j === 0) {
                                             //Não verifica j-1
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j+1)
-                                            if(tabuleiro[i-1][j+1].numero == 0){
+                                            if(tabuleiro[i-1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j+1)
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j) 
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                         // (i+1),(j+1)
-                                            if(tabuleiro[i+1][j+1].numero == 0){
+                                            if(tabuleiro[i+1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
-                                        } else if (j == 8) {
+                                        } else if (j === 8) {
                                             //Não verifica j+1
                                             // (i-1),(j-1)
-                                            if(tabuleiro[i-1][j-1].numero == 0){
+                                            if(tabuleiro[i-1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j-1)
-                                            if(tabuleiro[i+1][j-1].numero == 0){
+                                            if(tabuleiro[i+1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j) 
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                         } else {
                                             
                                             // (i-1),(j-1)
-                                            if(tabuleiro[i-1][j-1].numero == 0){
+                                            if(tabuleiro[i-1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j)
-                                            if(tabuleiro[i-1][j].numero == 0){
+                                            if(tabuleiro[i-1][j].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i-1),(j+1)
-                                            if(tabuleiro[i-1][j+1].numero == 0){
+                                            if(tabuleiro[i-1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j-1)
-                                            if(tabuleiro[i][j-1].numero == 0){
+                                            if(tabuleiro[i][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i),(j+1)
-                                            if(tabuleiro[i][j+1].numero == 0){
+                                            if(tabuleiro[i][j+1].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j-1)
-                                            if(tabuleiro[i+1][j-1].numero == 0){
+                                            if(tabuleiro[i+1][j-1].numero === 0){
                                                         verificador = true;  
                                                     }
                                             // (i+1),(j) 
-                                            if(tabuleiro[i+1][j].numero == 0){
+                                            if(tabuleiro[i+1][j].numero === 0){
                                                 verificador = true;  
                                             }
                                             // (i+1),(j+1)
-                                            if(tabuleiro[i+1][j+1].numero == 0){
+                                            if(tabuleiro[i+1][j+1].numero === 0){
                                                         verificador = true;  
                                                     }
                                         }
                                     }
-                                    if(verificador == true){
+                                    if(verificador === true){
                                         abrirCasa.push(marcado[index])
                                     }
                                 }
                     return (abrirCasa.length > 0) ? (true) : (false);
                 }
             function maiorProbabilidade() {
-                //Verifica quais casas tem maiores probabilidades
-                let maior = [];
-                maior.push(marcado[0])
-                for(let i=1;i<marcado.length; i++){
-                    if(maior[0].probabilidade < marcado[i].probabilidade){
-                        if(maior.length > 1){
-                            maior = [];
-                            maior.push(marcado[i]);
-                        }else{
-                            maior.pop();
-                            maior.push(marcado[i],0);
+//Verifica quais casas tem as maiores probabilidades
+let maior = [];
+maior.push(marcado[0])//AQUI
+for(let i=1;i<marcado.length; i++){
+    if(maior[0].probabilidade < marcado[i].probabilidade){
+        if(maior.length > 1){
+            maior = [];
+            maior.push(marcado[i]);
+        }else{
+            maior.pop();
+            maior.push(marcado[i]);
+        }
+    }else if(maior[0].probabilidade === marcado[i].probabilidade){
+        maior.push(marcado[i])
+    }
+}
+return maior;
+}           
+            function selecionaBombas(props) {
+            //Coloca no tabuleiro as bombas
+            if(auxxx === 7){
+                console.log()
+                }
+            for(let i = 0; i < props.length; i++){
+                let indiceI = parseInt((props[i].indices.split(""))[0]);
+                let indiceJ = parseInt((props[i].indices.split(""))[1]);
+                tabuleiro[indiceI][indiceJ].bomba = true;
+                tabuleiro[indiceI][indiceJ].numero = "*"; 
+            }
+            
+        } 
+            function achouBombas() {
+            //Coloca no tabuleiro as bombas
+            for(let i= 0; i < bombas.length; i++){
+                document.getElementById('exibir-execucao').innerHTML += '<p>' + 'Bomba: (' + (parseInt(bombas[i].indices.split("")[0]) +1) + ',' + ((parseInt(bombas[i].indices.split("")[1]) +1)) + ')' + '</p>';
+            }
+            
+        }     
+            function verificaVizinhoUm() {
+        
+        let verificador = false;
+        for (let index = 0; index < possiveisBombas.length; index++) {
+            //Acha a posição da possível bomba
+            let i = parseInt((possiveisBombas[index].indices.split(""))[0]);
+            let j = parseInt((possiveisBombas[index].indices.split(""))[1]);
+            let qtdBomba = 0;
+            let qtdVazio = 0;
+            //Verificar vizinhos da possível bomba
+            if (i === 0) {
+                //Não verifica i-1
+                if (j === 0) {
+                    //Não verifica j-1 
+                    if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                        if (tabuleiro[i][j + 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i][j + 1].numero === "-") {
+                            qtdVazio++;
                         }
-                    }else if(maior[0].probabilidade == marcado[i].probabilidade){
-                        maior.push(marcado[i])
+                        if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                            if (tabuleiro[i + 1][j].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i + 1][j].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i + 1][j + 1].numero === 1 || tabuleiro[i + 1][j + 1].aberto === false) {
+                                if (tabuleiro[i + 1][j + 1].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i + 1][j + 1].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (qtdBomba < 3) {
+                                    if (qtdVazio < 3) {
+                                        verificador = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                        if (tabuleiro[i][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i + 1][j - 1].numero === 1 || tabuleiro[i + 1][j - 1].aberto === false) {
+                            if (tabuleiro[i + 1][j - 1].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i + 1][j - 1].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                                if (tabuleiro[i + 1][j].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i + 1][j].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (qtdBomba < 3) {
+                                    if (qtdVazio < 3) {
+                                        if (qtdVazio + qtdBomba < 3) {
+                                            verificador = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                        if (tabuleiro[i][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                            if (tabuleiro[i][j + 1].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i][j + 1].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i + 1][j - 1].numero === 1 || tabuleiro[i + 1][j - 1].aberto === false) {
+                                if (tabuleiro[i + 1][j - 1].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i + 1][j - 1].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                                    if (tabuleiro[i + 1][j].bomba === true) {
+                                        qtdBomba++;
+                                    } else if (tabuleiro[i + 1][j].numero === "-") {
+                                        qtdVazio++;
+                                    }
+                                    if (tabuleiro[i + 1][j + 1].numero === 1 || tabuleiro[i + 1][j + 1].aberto === false) {
+                                        if (tabuleiro[i + 1][j + 1].bomba === true) {
+                                            qtdBomba++;
+                                        } else if (tabuleiro[i + 1][j + 1].numero === "-") {
+                                            qtdVazio++;
+                                        }
+                                        if (qtdBomba < 5) {
+                                            if (qtdVazio < 5) {
+                                                if (qtdVazio + qtdBomba < 5) {
+                                                    verificador = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } else if (i === 8) {
+                //Não verifica i+1
+                if (j === 0) {
+                    //Não verifica j-1
+                    if (tabuleiro[i - 1][j].numero === 1 || tabuleiro[i - 1][j].aberto === false) {
+                        if (tabuleiro[i - 1][j].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i - 1][j + 1].numero === 1 || tabuleiro[i - 1][j + 1].aberto === false) {
+                            if (tabuleiro[i - 1][j + 1].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j + 1].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                                if (tabuleiro[i][j + 1].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i][j + 1].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (qtdBomba < 3) {
+                                    if (qtdVazio < 3) {
+                                        if (qtdVazio + qtdBomba < 3) {
+                                            verificador = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i - 1][j - 1].numero === 1 || tabuleiro[i - 1][j - 1].aberto === false) {
+                        if (tabuleiro[i - 1][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i - 1][j].numero === 1 || tabuleirotabuleiro[i - 1][j].aberto === false) {
+                            if (tabuleiro[i - 1][j].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                                if (tabuleiro[i][j - 1].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i][j - 1].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (qtdBomba < 3) {
+                                    if (qtdVazio < 3) {
+                                        if (qtdVazio + qtdBomba < 3) {
+                                            verificador = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (tabuleiro[i - 1][j - 1].numero === 1 || tabuleiro[i - 1][j - 1].aberto === false) {
+                        if (tabuleiro[i - 1][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i - 1][j].numero === 1 || tabuleiro[i - 1][j].aberto === false) {
+                            if (tabuleiro[i - 1][j].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i - 1][j + 1].numero === 1 || tabuleiro[i - 1][j + 1].aberto === false) {
+                                if (tabuleiro[i - 1][j + 1].bomba === true) {
+                                    qtdBomba++;
+                                } else if (tabuleiro[i - 1][j + 1].numero === "-") {
+                                    qtdVazio++;
+                                }
+                                if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                                    if (tabuleiro[i][j - 1].bomba === true) {
+                                        qtdBomba++;
+                                    } else if (tabuleiro[i][j - 1].numero === "-") {
+                                        qtdVazio++;
+                                    }
+                                    if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                                        if (tabuleiro[i][j + 1].bomba === true) {
+                                            qtdBomba++;
+                                        } else if (tabuleiro[i][j + 1].numero === "-") {
+                                            qtdVazio++;
+                                        }
+                                        if (qtdBomba < 5) {
+                                            if (qtdVazio < 5) {
+                                                if (qtdVazio + qtdBomba < 5) {
+                                                    verificador = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                return maior;
-            }
-            function selecionaBombas(props) {
-                //Coloca no tabuleiro as bombas
-                for(let i= 0; i < props.length; i++){
-                    let indiceI = (props[i].indices.split(""))[0];
-                    let indiceJ = (props[i].indices.split(""))[1];
-                    tabuleiro[indiceI][indiceJ].bomba = true;
-                }
-                
-            }   
-            function verificaVizinhoUm() {
-                //Verificado
-                let verificador = false;
-                for (let index = 0; index < possiveisBombas.length; index++) {
-                    //Acha a posição da possível bomba
-                    let i = parseInt((possiveisBombas[index].indices.split(""))[0]);
-                    let j = parseInt((possiveisBombas[index].indices.split(""))[1]);
-                    let qtdBomba = 0;
-                    let qtdVazio = 0;
-                    //Verificar vizinhos da possível bomba
-                    if (i == 0) {
-                        //Não verifica i-1
-                        if (j == 0) {
-                            //Não verifica j-1 
-                            if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                if (tabuleiro[i][j + 1].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i][j + 1].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                    if (tabuleiro[i + 1][j].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i + 1][j].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i + 1][j + 1].numero == 1 || tabuleiro[i + 1][j + 1].numero == "") {
-                                        if (tabuleiro[i + 1][j + 1].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i + 1][j + 1].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (qtdBomba < 3) {
-                                            if (qtdVazio < 3) {
-                                                verificador = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (j == 8) {
-                            //Não verifica j+1
-                            if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                if (tabuleiro[i][j - 1].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i][j - 1].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i + 1][j - 1].numero == 1 || tabuleiro[i + 1][j - 1].numero == "") {
-                                    if (tabuleiro[i + 1][j - 1].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i + 1][j - 1].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                        if (tabuleiro[i + 1][j].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i + 1][j].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (qtdBomba < 3) {
-                                            if (qtdVazio < 3) {
-                                                if (qtdVazio + qtdBomba < 3) {
-                                                    verificador = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                if (tabuleiro[i][j - 1].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i][j - 1].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                    if (tabuleiro[i][j + 1].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i][j + 1].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i + 1][j - 1].numero == 1 || tabuleiro[i + 1][j - 1].numero == "") {
-                                        if (tabuleiro[i + 1][j - 1].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i + 1][j - 1].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                            if (tabuleiro[i + 1][j].bomba == true) {
-                                                qtdBomba++;
-                                            } else if (tabuleiro[i + 1][j].numero == "") {
-                                                qtdVazio++;
-                                            }
-                                            if (tabuleiro[i + 1][j + 1].numero == 1 || tabuleiro[i + 1][j + 1].numero == "") {
-                                                if (tabuleiro[i + 1][j + 1].bomba == true) {
-                                                    qtdBomba++;
-                                                } else if (tabuleiro[i + 1][j + 1].numero == "") {
-                                                    qtdVazio++;
-                                                }
-                                                if (qtdBomba < 5) {
-                                                    if (qtdVazio < 5) {
-                                                        if (qtdVazio + qtdBomba < 5) {
-                                                            verificador = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-    
+            } else {//
+                if (j === 0) {
+                    //Não verifica j-1
+                    if (tabuleiro[i - 1][j].numero === 1 || tabuleiro[i - 1][j].aberto === false) {
+                        if (tabuleiro[i - 1][j].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j].numero === "-") {
+                            qtdVazio++;
                         }
-                    } else if (i == 8) {
-                        //Não verifica i+1
-                        if (j == 0) {
-                            //Não verifica j-1
-                            if (tabuleiro[i - 1][j].numero == 1 || tabuleiro[i - 1][j].numero == "") {
-                                if (tabuleiro[i - 1][j].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i - 1][j].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i - 1][j + 1].numero == 1 || tabuleiro[i - 1][j + 1].numero == "") {
-                                    if (tabuleiro[i - 1][j + 1].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j + 1].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                        if (tabuleiro[i][j + 1].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i][j + 1].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (qtdBomba < 3) {
-                                            if (qtdVazio < 3) {
-                                                if (qtdVazio + qtdBomba < 3) {
-                                                    verificador = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                        if (tabuleiro[i - 1][j + 1].numero === 1 || tabuleiro[i - 1][j + 1].aberto === false) {
+                            if (tabuleiro[i - 1][j + 1].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j + 1].numero === "-") {
+                                qtdVazio++;
                             }
-                        } else if (j == 8) {
-                            //Não verifica j+1
-                            if (tabuleiro[i - 1][j - 1].numero == 1 || tabuleiro[i - 1][j - 1].numero == "") {
-                                if (tabuleiro[i - 1][j - 1].bomba == true) {
+                            if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                                if (tabuleiro[i][j + 1].bomba === true) {
                                     qtdBomba++;
-                                } else if (tabuleiro[i - 1][j - 1].numero == "") {
+                                } else if (tabuleiro[i][j + 1].numero === "-") {
                                     qtdVazio++;
                                 }
-                                if (tabuleiro[i - 1][j].numero == 1 || tabuleirotabuleiro[i - 1][j].numero == "") {
-                                    if (tabuleiro[i - 1][j].bomba == true) {
+                                if (tabuleiro[i + 1][j + 1].numero === 1 || tabuleiro[i + 1][j + 1].aberto === false) {
+                                    if (tabuleiro[i + 1][j + 1].bomba === true) {
                                         qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j].numero == "") {
+                                    } else if (tabuleiro[i + 1][j + 1].numero === "-") {
                                         qtdVazio++;
                                     }
-                                    if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                        if (tabuleiro[i][j - 1].bomba == true) {
+                                    if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                                        if (tabuleiro[i + 1][j].bomba === true) {
                                             qtdBomba++;
-                                        } else if (tabuleiro[i][j - 1].numero == "") {
+                                        } else if (tabuleiro[i + 1][j].numero === "-") {
                                             qtdVazio++;
                                         }
-                                        if (qtdBomba < 3) {
-                                            if (qtdVazio < 3) {
-                                                if (qtdVazio + qtdBomba < 3) {
+                                        if (qtdBomba < 5) {
+                                            if (qtdVazio < 5) {
+                                                if (qtdVazio + qtdBomba < 5) {
                                                     verificador = true;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if (tabuleiro[i - 1][j - 1].numero == 1 || tabuleiro[i - 1][j - 1].numero == "") {
-                                if (tabuleiro[i - 1][j - 1].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i - 1][j - 1].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i - 1][j].numero == 1 || tabuleiro[i - 1][j].numero == "") {
-                                    if (tabuleiro[i - 1][j].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i - 1][j + 1].numero == 1 || tabuleiro[i - 1][j + 1].numero == "") {
-                                        if (tabuleiro[i - 1][j + 1].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i - 1][j + 1].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                            if (tabuleiro[i][j - 1].bomba == true) {
-                                                qtdBomba++;
-                                            } else if (tabuleiro[i][j - 1].numero == "") {
-                                                qtdVazio++;
-                                            }
-                                            if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                                if (tabuleiro[i][j + 1].bomba == true) {
-                                                    qtdBomba++;
-                                                } else if (tabuleiro[i][j + 1].numero == "") {
-                                                    qtdVazio++;
-                                                }
-                                                if (qtdBomba < 5) {
-                                                    if (qtdVazio < 5) {
-                                                        if (qtdVazio + qtdBomba < 5) {
-                                                            verificador = true;
-                                                        }
-                                                    }
                                                 }
                                             }
                                         }
@@ -1001,150 +1148,104 @@
                                 }
                             }
                         }
-                    } else {//
-                        if (j == 0) {
-                            //Não verifica j-1
-                            if (tabuleiro[i - 1][j].numero == 1 || tabuleiro[i - 1][j].numero == "") {
-                                if (tabuleiro[i - 1][j].bomba == true) {
+                    }
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i - 1][j - 1].numero === 1 || tabuleiro[i - 1][j - 1].aberto === false) {
+                        if (tabuleiro[i - 1][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i - 1][j].numero === 1 || tabuleiro[i - 1][j].aberto === false) {
+                            if (tabuleiro[i - 1][j].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j].numero === "-") {
+                                qtdVazio++;
+                            }
+                            if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                                if (tabuleiro[i][j - 1].bomba === true) {
                                     qtdBomba++;
-                                } else if (tabuleiro[i - 1][j].numero == "") {
+                                } else if (tabuleiro[i][j - 1].numero === "-") {
                                     qtdVazio++;
                                 }
-                                if (tabuleiro[i - 1][j + 1].numero == 1 || tabuleiro[i - 1][j + 1].numero == "") {
-                                    if (tabuleiro[i - 1][j + 1].bomba == true) {
+                                if (tabuleiro[i + 1][j - 1].numero === 1 || tabuleiro[i + 1][j - 1].aberto === false) {
+                                    if (tabuleiro[i + 1][j - 1].bomba === true) {
                                         qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j + 1].numero == "") {
+                                    } else if (tabuleiro[i + 1][j - 1].numero === "-") {
                                         qtdVazio++;
                                     }
-                                    if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                        if (tabuleiro[i][j + 1].bomba == true) {
+                                    if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                                        if (tabuleiro[i + 1][j].bomba === true) {
                                             qtdBomba++;
-                                        } else if (tabuleiro[i][j + 1].numero == "") {
+                                        } else if (tabuleiro[i + 1][j].numero === "-") {
                                             qtdVazio++;
                                         }
-                                        if (tabuleiro[i + 1][j + 1].numero == 1 || tabuleiro[i + 1][j + 1].numero == "") {
-                                            if (tabuleiro[i + 1][j + 1].bomba == true) {
-                                                qtdBomba++;
-                                            } else if (tabuleiro[i + 1][j + 1].numero == "") {
-                                                qtdVazio++;
-                                            }
-                                            if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                                if (tabuleiro[i + 1][j].bomba == true) {
-                                                    qtdBomba++;
-                                                } else if (tabuleiro[i + 1][j].numero == "") {
-                                                    qtdVazio++;
-                                                }
-                                                if (qtdBomba < 5) {
-                                                    if (qtdVazio < 5) {
-                                                        if (qtdVazio + qtdBomba < 5) {
-                                                            verificador = true;
-                                                        }
-                                                    }
+                                        if (qtdBomba < 5) {
+                                            if (qtdVazio < 5) {
+                                                if (qtdVazio + qtdBomba < 5) {
+                                                    verificador = true;
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                        } else if (j == 8) {
-                            //Não verifica j+1
-                            if (tabuleiro[i - 1][j - 1].numero == 1 || tabuleiro[i - 1][j - 1].numero == "") {
-                                if (tabuleiro[i - 1][j - 1].bomba == true) {
-                                    qtdBomba++;
-                                } else if (tabuleiro[i - 1][j - 1].numero == "") {
-                                    qtdVazio++;
-                                }
-                                if (tabuleiro[i - 1][j].numero == 1 || tabuleiro[i - 1][j].numero == "") {
-                                    if (tabuleiro[i - 1][j].bomba == true) {
-                                        qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j].numero == "") {
-                                        qtdVazio++;
-                                    }
-                                    if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                        if (tabuleiro[i][j - 1].bomba == true) {
-                                            qtdBomba++;
-                                        } else if (tabuleiro[i][j - 1].numero == "") {
-                                            qtdVazio++;
-                                        }
-                                        if (tabuleiro[i + 1][j - 1].numero == 1 || tabuleiro[i + 1][j - 1].numero == "") {
-                                            if (tabuleiro[i + 1][j - 1].bomba == true) {
-                                                qtdBomba++;
-                                            } else if (tabuleiro[i + 1][j - 1].numero == "") {
-                                                qtdVazio++;
-                                            }
-                                            if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                                if (tabuleiro[i + 1][j].bomba == true) {
-                                                    qtdBomba++;
-                                                } else if (tabuleiro[i + 1][j].numero == "") {
-                                                    qtdVazio++;
-                                                }
-                                                if (qtdBomba < 5) {
-                                                    if (qtdVazio < 5) {
-                                                        if (qtdVazio + qtdBomba < 5) {
-                                                            verificador = true;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                        }
+                    }
+                } else {
+                    if (tabuleiro[i - 1][j - 1].numero === 1 || tabuleiro[i - 1][j - 1].aberto === false) {
+                        if (tabuleiro[i - 1][j - 1].bomba === true) {
+                            qtdBomba++;
+                        } else if (tabuleiro[i - 1][j - 1].numero === "-") {
+                            qtdVazio++;
+                        }
+                        if (tabuleiro[i - 1][j].numero === 1 || tabuleiro[i - 1][j].aberto === false) {
+                            if (tabuleiro[i - 1][j].bomba === true) {
+                                qtdBomba++;
+                            } else if (tabuleiro[i - 1][j].numero === "-") {
+                                qtdVazio++;
                             }
-                        } else {
-                            if (tabuleiro[i - 1][j - 1].numero == 1 || tabuleiro[i - 1][j - 1].numero == "") {
-                                if (tabuleiro[i - 1][j - 1].bomba == true) {
+                            if (tabuleiro[i][j - 1].numero === 1 || tabuleiro[i][j - 1].aberto === false) {
+                                if (tabuleiro[i][j - 1].bomba === true) {
                                     qtdBomba++;
-                                } else if (tabuleiro[i - 1][j - 1].numero == "") {
+                                } else if (tabuleiro[i][j - 1].numero === "-") {
                                     qtdVazio++;
                                 }
-                                if (tabuleiro[i - 1][j].numero == 1 || tabuleiro[i - 1][j].numero == "") {
-                                    if (tabuleiro[i - 1][j].bomba == true) {
+                                if (tabuleiro[i + 1][j - 1].numero === 1 || tabuleiro[i + 1][j - 1].aberto === false) {
+                                    if (tabuleiro[i + 1][j - 1].bomba === true) {
                                         qtdBomba++;
-                                    } else if (tabuleiro[i - 1][j].numero == "") {
+                                    } else if (tabuleiro[i + 1][j - 1].numero === "-") {
                                         qtdVazio++;
                                     }
-                                    if (tabuleiro[i][j - 1].numero == 1 || tabuleiro[i][j - 1].numero == "") {
-                                        if (tabuleiro[i][j - 1].bomba == true) {
+                                    if (tabuleiro[i + 1][j].numero === 1 || tabuleiro[i + 1][j].aberto === false) {
+                                        if (tabuleiro[i + 1][j].bomba === true) {
                                             qtdBomba++;
-                                        } else if (tabuleiro[i][j - 1].numero == "") {
+                                        } else if (tabuleiro[i + 1][j].numero === "-") {
                                             qtdVazio++;
                                         }
-                                        if (tabuleiro[i + 1][j - 1].numero == 1 || tabuleiro[i + 1][j - 1].numero == "") {
-                                            if (tabuleiro[i + 1][j - 1].bomba == true) {
+                                        if (tabuleiro[i - 1][j + 1].numero === 1 || tabuleiro[i - 1][j + 1].aberto === false) {
+                                            if (tabuleiro[i - 1][j + 1].bomba === true) {
                                                 qtdBomba++;
-                                            } else if (tabuleiro[i + 1][j - 1].numero == "") {
+                                            } else if (tabuleiro[i - 1][j + 1].numero === "-") {
                                                 qtdVazio++;
                                             }
-                                            if (tabuleiro[i + 1][j].numero == 1 || tabuleiro[i + 1][j].numero == "") {
-                                                if (tabuleiro[i + 1][j].bomba == true) {
+                                            if (tabuleiro[i][j + 1].numero === 1 || tabuleiro[i][j + 1].aberto === false) {
+                                                if (tabuleiro[i][j + 1].bomba === true) {
                                                     qtdBomba++;
-                                                } else if (tabuleiro[i + 1][j].numero == "") {
+                                                } else if (tabuleiro[i][j + 1].numero === "-") {
                                                     qtdVazio++;
                                                 }
-                                                if (tabuleiro[i - 1][j + 1].numero == 1 || tabuleiro[i - 1][j + 1].numero == "") {
-                                                    if (tabuleiro[i - 1][j + 1].bomba == true) {
+                                                if (tabuleiro[i + 1][j + 1].numero === 1 || tabuleiro[i + 1][j + 1].aberto === false) {
+                                                    if (tabuleiro[i + 1][j + 1].bomba === true) {
                                                         qtdBomba++;
-                                                    } else if (tabuleiro[i - 1][j + 1].numero == "") {
+                                                    } else if (tabuleiro[i + 1][j + 1].numero === "-") {
                                                         qtdVazio++;
                                                     }
-                                                    if (tabuleiro[i][j + 1].numero == 1 || tabuleiro[i][j + 1].numero == "") {
-                                                        if (tabuleiro[i][j + 1].bomba == true) {
-                                                            qtdBomba++;
-                                                        } else if (tabuleiro[i][j + 1].numero == "") {
-                                                            qtdVazio++;
-                                                        }
-                                                        if (tabuleiro[i + 1][j + 1].numero == 1 || tabuleiro[i + 1][j + 1].numero == "") {
-                                                            if (tabuleiro[i + 1][j + 1].bomba == true) {
-                                                                qtdBomba++;
-                                                            } else if (tabuleiro[i + 1][j + 1].numero == "") {
-                                                                qtdVazio++;
-                                                            }
-                                                            if (qtdBomba < 8) {
-                                                                if (qtdVazio < 8) {
-                                                                    if (qtdVazio + qtdBomba < 8) {
-                                                                        verificador = true;
-                                                                    }
-                                                                }
+                                                    if (qtdBomba < 8) {
+                                                        if (qtdVazio < 8) {
+                                                            if (qtdVazio + qtdBomba < 8) {
+                                                                verificador = true;
                                                             }
                                                         }
                                                     }
@@ -1156,36 +1257,461 @@
                             }
                         }
                     }
-                        if (verificador == true) {
-                            bombaAuxiliar.push(possiveisBombas[index])
+                }
+            }
+                if (verificador === true) {
+                    bombaAuxiliar.push(possiveisBombas[index])
+                }
+            }
+            return (bombaAuxiliar.length > 0) ? (true) : (false);
+        }
+            function verificaVizinhoDiferente() {     
+        //AQUI
+        
+        for (let index = 0; index < possiveisBombas.length; index++) {
+            let verificador = false;
+            //Acha a posição da possível bomba
+            let i = parseInt((possiveisBombas[index].indices.split(""))[0]);
+            let j = parseInt((possiveisBombas[index].indices.split(""))[1]);
+            let qtdUm = 0;
+            //Verificar vizinhos da possível bomba
+            //Não haverá todos vizinhos um
+            //Para ser bomba, apenas um vizinho deve ser um
+            if (i === 0) {
+                //Não verifica i-1
+                if (j === 0) {
+                    //Não verifica j-1 
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                            verificador = true;
+                    }
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;
+                    }
+                } else {
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {    
+                        verificador = true;
+                    }
+
+                }
+            } else if (i === 8) {
+                //Não verifica i+1
+                if (j === 0) {
+                    //Não verifica j-1
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;    
+                    }
+                
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i - 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;
+                    }
+                    
+                } else {
+                    if (tabuleiro[i - 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;
+                    }
+                }
+            } else {//
+                if (j === 0) {
+                    //Não verifica j-1
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;     
+                    }
+                    
+                } else if (j === 8) {
+                    //Não verifica j+1
+                    if (tabuleiro[i - 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                        verificador = true;
+                    }
+                    
+                } else {
+                    if (tabuleiro[i - 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j - 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i - 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (tabuleiro[i + 1][j + 1].numero === 1) {
+                        qtdUm++;
+                    }
+                    if (qtdUm === 1) {
+                                verificador = true;
+                    }
+                }
+            }
+                if (verificador === true) {
+                    bombaAuxiliar.push(possiveisBombas[index])
+                }
+            }
+            return (bombaAuxiliar.length > 0) ? (true) : (false);
+    }
+            function verificaModificadoComCasa() {
+            
+            
+            for (let index = 0; index < modificado.length; index++) {
+                let verificador = false;
+                if (modificado[index].numero === 0) {
+                    //Acha a posição do modificado
+                    let i = parseInt((modificado[index].indices.split(""))[0]);
+                    let j = parseInt((modificado[index].indices.split(""))[1]);
+                    //Verificar vizinhos do modificado
+                    if (i === 0) {
+                        //Não verifica i-1
+                        if (j === 0) {
+                            //Não verifica j-1 
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+
+                            // (i+1),(j+1)
+                            if (tabuleiro[i + 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j + 1])
+                            }
+                        } else if (j === 8) {
+                            //Não verifica j+1
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+
+                            // (i+1),(j-1)
+                            if (tabuleiro[i + 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j - 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+                        } else {
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                            // (i+1),(j-1)
+                            if (tabuleiro[i + 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j - 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+
+                            // (i+1),(j+1)
+                            if (tabuleiro[i + 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j + 1])
+                            }
+                        }
+                    } else if (i === 8) {
+                        //Não verifica i+1
+                        if (j === 0) {
+                            //Não verifica j-1
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i-1),(j+1)
+                            if (tabuleiro[i - 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j + 1])
+                            }
+
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                        } else if (j === 8) {
+                            //Não verifica j+1
+                            // (i-1),(j-1)
+                            if (tabuleiro[i - 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j - 1])
+                            }
+
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+                        } else {
+                            // (i-1),(j-1)
+                            if (tabuleiro[i - 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j - 1])
+                            }
+
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i-1),(j+1)
+                            if (tabuleiro[i - 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j + 1])
+                            }
+
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                        }
+                    } else {
+
+                        if (j === 0) {
+                            //Não verifica j-1
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i-1),(j+1)
+                            if (tabuleiro[i - 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j + 1])
+                            }
+
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+
+                            // (i+1),(j+1)
+                            if (tabuleiro[i + 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j + 1])
+                            }
+
+                        } else if (j === 8) {
+                            //Não verifica j+1
+                            // (i-1),(j-1)
+                            if (tabuleiro[i - 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j - 1])
+                            }
+
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+
+                            // (i+1),(j-1)
+                            if (tabuleiro[i + 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j - 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+
+                        } else {
+
+                            // (i-1),(j-1)
+                            if (tabuleiro[i - 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j - 1])
+                            }
+
+                            // (i-1),(j)
+                            if (tabuleiro[i - 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j])
+                            }
+
+                            // (i-1),(j+1)
+                            if (tabuleiro[i - 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i - 1][j + 1])
+                            }
+
+                            // (i),(j-1)
+                            if (tabuleiro[i][j - 1].numero  === "-" ) {
+                                abrirCasa.push(tabuleiro[i][j - 1])
+                            }
+
+                            // (i),(j+1)
+                            if (tabuleiro[i][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i][j + 1])
+                            }
+
+                            // (i+1),(j-1)
+                            if (tabuleiro[i + 1][j - 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j - 1])
+                            }
+
+                            // (i+1),(j)
+                            if (tabuleiro[i + 1][j].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j])
+                            }
+
+                            // (i+1),(j+1)
+                            if (tabuleiro[i + 1][j + 1].numero  === "-") {
+                                abrirCasa.push(tabuleiro[i + 1][j + 1])
+                            }
+
                         }
                     }
-                    return (bombaAuxiliar.length > 0) ? (true) : (false);
+
                 }
-            //Preparando variáveis
-            let clicaOuBomba = false;
-            let bombas = [];
+            }
+            return (abrirCasa.length > 0) ? (true) : (false);
+        }
+            
             let marcado = [];
-            let marcadoAnterior = [];
+            let clicaOuBomba = false;
             let abrirCasa = [];
-            let modificado = [];
             let bombaAuxiliar = [];
-            let fim;
+            let possiveisBombas = [];
+            let modificado = [];
             //Pegando tabuleiro atual
             let atual = campoMinado.Tabuleiro().split('\r\n');
-            //Preparando variável matriz 9x9
-            let tabuleiro = [];
-            tabuleiro = new Array(9);
-            for (let i = 0; i < 9; i++) {
-                tabuleiro[i] = new Array(9);
-            }
-
+            
             //Colocando Valores do tabuleiro atual para matriz tabuleiro
             for (let i = 0; i < 9; i++) {
                 for (let j = 0; j < 9; j++) {
                     let aux = (atual[i][j].split("") != '-') ? parseInt(atual[i][j].split("")) : atual[i][j].split("");
                     tabuleiro[i][j] = {
-                        numero: (aux != '-') ? (aux) : "",
+                        numero: (aux != '-') ? (aux) : "-",
                         bomba: false,
                         probabilidade: 0,
                         indices: (i + '' + j),
@@ -1193,72 +1719,116 @@
                     }
                 }
             }
-            
-
-            function verificaVizinhoDiferente(){
-                //TODO
+            if (temBomba) {
+                console.log("Tem Bomba")
+                //Marca as bombas no tabuleiro
+                selecionaBombas(bombas)
+                //Diminui contagem de bombas nos vizinhos das bombas
+                console.log("Diminui contagem")
+                diminuiContagem()
             }
-            // do {PRECISA DISSO AQUI???
-            //     if (temBomba) {
-            //            //Marca as bombas no tabuleiro
-            //            selecionaBombas(bombas)
-            //         //Diminui contagem de bombas nos vizinhos das bombas
-            //            diminuiContagem()
-            //     }
-            //     //Verifica probabilidade de ter bomba
-            //     verificaProbabilidade()
-                    
-                    if(!verificaMarcadoAnterior()){
-                        //Não há marcado anterior que não esteja marcado
-                        //Verifica se há algum marcado com vizinho 0. Se há esse marcado não tem bomba.
-                        if(!verificaVizinhoMarcado()){
-                            //Não há algum marcado com vizinho 0
-                            //Marcados com maiores probabilidades são possíveis bombas
-                           let possiveisBombas = maiorProbabilidade();
-                            if(possiveisBombas.length > 1){
-                                //Mais de uma bomba
-                                //Verifica se todos os vizinhos abertos é 1.
-                                if(!verificaVizinhoUm()){
-                                    //Não há possíveis bombas com vizinhos abertos somente 1.
-                                    //Há nos possíveis algum com vizinho diferente?
-                                    if(!verificaVizinhoDiferente()){
-
-                                    }else{
-                                        console.log("Algo errado aconteceu")
-                                    }
-                                }else{
-                                    //Se há alguma possível bomba com todos os vizinhos 1, é uma bomba.
-                                    for(let i=0;i<bombaAuxiliar.length;i++){
-                                        bombas.push(bombaAuxiliar[i]);
-                                    }
-                                    selecionaBombas(bombaAuxiliar)
+            //Verifica probabilidade de ter bomba
+            console.log("Verifica Probabilidade")
+            verificaProbabilidade()
+            
+            console.log("Verifica Marcado anterior")       
+            if(!verificaMarcadoAnterior()){
+                console.log("Não há marcado anterior que não esteja marcado")
+                //Não há marcado anterior que não esteja marcado
+                //Verifica se há algum marcado com vizinho 0. Se há esse marcado não tem bomba.
+                console.log("Verifica vizinho 0")//AQUI
+                //console.log(tabuleiro)
+                if(!verificaVizinhoMarcado()){ 
+                    console.log("Não há vizinho marcado")
+                    //Não há algum marcado com vizinho 0
+                    //Marcados com maiores probabilidades são possíveis bombas
+                    console.log("Maior Probabilidade")
+                        possiveisBombas = maiorProbabilidade();
+                    console.log("Verifica se há mais de uma possível bomba")
+                    if(possiveisBombas.length > 1){
+                        console.log("Há mais de uma possível bomba")
+                        //Mais de uma bomba
+                        //Verifica se todos os vizinhos abertos é 1.
+                        console.log("Verifica se há possível bomba com todos os vizinhos abertos é 1")
+                        if(!verificaVizinhoUm()){
+                            console.log("Não há possível bomba com todos os vizinhos abertos é 1")
+                            //Não há possíveis bombas com vizinhos abertos somente 1.
+                            //Há nos possíveis algum com vizinho diferente?
+                            console.log("Verifica se há possível bomba com um único vizinho 1")
+                            if(verificaVizinhoDiferente()){
+                                console.log("Há possível bomba com um único vizinho 1")
+                                for(let i=0;i<bombaAuxiliar.length;i++){
+                                    bombas.push(bombaAuxiliar[i]);
                                 }
+                                selecionaBombas(bombaAuxiliar)
+                                achouBombas()
+                                temBomba = true;
+                                clicaOuBomba = true;
+                                console.log("Verifica se há modificado 0 com vizinho fechado")
+                                if(verificaModificadoComCasa()){
+                                    console.log("Há modificado 0 com vizinho fechado")
+                                    abrirCasaTabuleiro();
+                                }  
                             }else{
-                                //Apenas uma bomba, marca como bomba no tabuleiro e adiciona as bombas
-                                bombas.push(possiveisBombas[0]);
-                                selecionaBombas(possiveisBombas)
-                                possiveisBombas = []
+                                console.log("Não há possível bomba com um único vizinho 1")
+                                console.log("Algo errado aconteceu")
                             }
                         }else{
-                            //Há marcado com vizinho 0, Pode abrir, não há bomba
+                            console.log("Há possível bomba com todos os vizinhos abertos é 1")
+                            //Se há alguma possível bomba com todos os vizinhos 1, é uma bomba.
+                            for(let i=0;i<bombaAuxiliar.length;i++){
+                                bombas.push(bombaAuxiliar[i]);
+                            }
+                            selecionaBombas(bombaAuxiliar)
+                            achouBombas()
                             clicaOuBomba = true;
-                            abrirCasaTabuleiro();
+                            temBomba = true;
+                            console.log("Verifica se há modificado 0 com vizinho fechado")
+                            if(verificaModificadoComCasa()){
+                                console.log("Há modificado 0 com vizinho fechado")
+                                abrirCasaTabuleiro();
+                            }
                         }
                     }else{
-                        //Marcado anterior não é bomba, nem foi aberto, e não está no marcado atual. Pode abrir, não há bomba.
+                        console.log("Há uma possível bomba")
+                        //Apenas uma bomba, marca como bomba no tabuleiro e adiciona as bombas
+                        bombas.push(possiveisBombas[0]);//AQUI
+                        selecionaBombas(possiveisBombas)
+                        achouBombas()
+                        temBomba = true;
                         clicaOuBomba = true;
-                        abrirCasaTabuleiro();
+                        console.log("Verifica se há modificado 0 com vizinho fechado")
+                        if(verificaModificadoComCasa()){
+                            console.log("Há modificado 0 com vizinho fechado")
+                            abrirCasaTabuleiro();
+                        }
                     }
-            //  DELETAR TABULEIRO/
-            //      marcadoAnterior = marcado
-            //      marcado = new Array();
-            //      abrirCasa = [];
-            // } while (!fim)
-
-        }
-
-
-        jogada()
+                }else{
+                    console.log("Há vizinho marcado")
+                    //Há marcado com vizinho 0, Pode abrir, não há bomba
+                    clicaOuBomba = true;
+                    abrirCasaTabuleiro();
+                }
+            }else{
+                console.log("Há marcado anterior")
+                //Marcado anterior não é bomba, nem foi aberto, e não está no marcado atual. Pode abrir, não há bomba.
+                clicaOuBomba = true;
+                abrirCasaTabuleiro();
+            }
+            //apagando lixo para a próxima jogada
+            marcadoAnterior = Object.assign({},marcado)
+            // marcado = new Array();               
+    }
+        let  auxxx=0;
+        do{
+            console.log('--------------------------------')
+            document.getElementById('exibir-execucao').innerHTML += '<p>' + '---------------' + '</p>';
+            jogada()
+            auxxx++
+            
+        }while(!posJogada())
+        
+        
         // Sequencia Correta
         // Bomba(4,3)
         // Bomba(5,7)
